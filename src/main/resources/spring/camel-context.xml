@@ -19,7 +19,7 @@
             <setBody>
                 <simple>Sample message with ID ${header.messageId}</simple>
             </setBody>
-            <log message="Generated message: ${body}"/>
+            <log message="GENERATED message: ${body}"/>
             <to uri="direct:messages"/>
         </route>
 

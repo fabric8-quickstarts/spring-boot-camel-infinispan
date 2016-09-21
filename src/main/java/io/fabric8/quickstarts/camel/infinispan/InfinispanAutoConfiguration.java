@@ -10,9 +10,15 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * This class defines two beans that are referenced in the camel routes.
+ * Its properties can be changed using the application.properties file or environment variables.
+ */
 @Configuration
 @ConfigurationProperties(prefix = "infinispan")
 public class InfinispanAutoConfiguration {
+
+    private Logger logger = LoggerFactory.getLogger(getClass());
 
     /**
      * The host name of the Infinispan service.
@@ -29,8 +35,9 @@ public class InfinispanAutoConfiguration {
      */
     private String cacheName = "default";
 
-    private Logger logger = LoggerFactory.getLogger(getClass());
-
+    /**
+     * Defines a bean named 'remoteCacheContainer' that points to the remote Infinispan cluster.
+     */
     @Bean(initMethod = "start", destroyMethod = "stop")
     public BasicCacheContainer remoteCacheContainer() {
 
@@ -45,6 +52,9 @@ public class InfinispanAutoConfiguration {
                 false);
     }
 
+    /**
+     * Defines a Camel idempotent repository based on the Infinispan cache container.
+     */
     @Bean
     public InfinispanIdempotentRepository infinispanRepository(BasicCacheContainer cacheContainer) {
         return InfinispanIdempotentRepository.infinispanIdempotentRepository(cacheContainer, cacheName);

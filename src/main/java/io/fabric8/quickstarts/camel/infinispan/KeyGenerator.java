@@ -6,6 +6,9 @@ import java.util.Random;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
+/**
+ * A simple key generator that eventually creates duplicate IDs.
+ */
 @Component
 @ConfigurationProperties(prefix = "quickstart.generator")
 public class KeyGenerator {
