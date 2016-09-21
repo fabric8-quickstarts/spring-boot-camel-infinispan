@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://camel.apache.org/schema/spring       http://camel.apache.org/schema/spring/camel-spring.xsd">
+
+
+    <camelContext xmlns="http://camel.apache.org/schema/spring">
+
+        <!-- Generation of sample messages -->
+        <route trace="false" id="testMessageProducerRoute">
+            <description>Route that will generate messages with duplicate IDs</description>
+
+            <from uri="timer:messages?period=5000"/>
+            <setHeader headerName="messageId">
+                <method ref="keyGenerator" method="newRandomKey"/>
+            </setHeader>
+            <setBody>
+                <simple>Sample message with ID ${header.messageId}</simple>
+            </setBody>
+            <log message="Generated message: ${body}"/>
+            <to uri="direct:messages"/>
+        </route>
+
+        <!-- Message consumer with idempotent repository -->
+        <route trace="false" id="testMessageConsumerRoute">
+            <description>Route that will consume generated messages and process them only once per message ID</description>
+
+            <from uri="direct:messages"/>
+            <idempotentConsumer messageIdRepositoryRef="infinispanRepository">
+                <header>messageId</header>
+                <!-- The following steps will be done once per messageId -->
+                <log message="PROCESSING new message: ${body}"/>
+            </idempotentConsumer>
+        </route>
+
+        <!-- Periodic cache lookup -->
+        <route trace="false" id="testUsingCacheDirectly">
+            <description>Route that will query the infinispan cache periodically</description>
+
+            <from uri="timer:check?period=13000&amp;delay=13000"/>
+            <setHeader headerName="CamelInfinispanKey">
+                <method ref="keyGenerator" method="newRandomKey"/>
+            </setHeader>
+            <setHeader headerName="CamelInfinispanOperation">
+                <constant>CamelInfinispanOperationGet</constant>
+            </setHeader>
+            <to uri="infinispan:remote?cacheContainer=#remoteCacheContainer"/>
+            <choice>
+                <when>
+                    <simple>${header.CamelInfinispanOperationResult} != null</simple>
+                    <log message="CACHE LOOKUP: entry for key ${header.CamelInfinispanKey} is: ${header.CamelInfinispanOperationResult}"/>
+                </when>
+                <otherwise>
+                    <log message="CACHE LOOKUP: no entry for key ${header.CamelInfinispanKey}"/>
+                </otherwise>
+            </choice>
+
+        </route>
+
+    </camelContext>
+
+</beans>
