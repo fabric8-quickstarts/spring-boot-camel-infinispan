@@ -6,7 +6,10 @@ import org.infinispan.client.hotrod.configuration.ConfigurationBuilder;
 import org.infinispan.commons.api.BasicCacheContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.cloud.client.ServiceInstance;
+import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -21,19 +24,17 @@ public class InfinispanAutoConfiguration {
     private Logger logger = LoggerFactory.getLogger(getClass());
 
     /**
-     * The host name of the Infinispan service.
+     * The name of the Infinispan service.
      */
-    private String host;
-
-    /**
-     * The port of the Infinispan service.
-     */
-    private Integer port;
+    private String service = "datagrid-app-hotrod";
 
     /**
      * The name of the Infinispan cache.
      */
     private String cacheName = "default";
+
+    @Autowired
+    private DiscoveryClient discoveryClient;
 
     /**
      * Defines a bean named 'remoteCacheContainer' that points to the remote Infinispan cluster.
@@ -41,15 +42,17 @@ public class InfinispanAutoConfiguration {
     @Bean(initMethod = "start", destroyMethod = "stop")
     public BasicCacheContainer remoteCacheContainer() {
 
-        String hostPort = host + ":" + port;
-        logger.info("Connecting to the Infinispan service at {}", hostPort);
+        ConfigurationBuilder builder = new ConfigurationBuilder()
+                .forceReturnValues(true);
 
-        return new RemoteCacheManager(
-                new ConfigurationBuilder()
-                        .addServers(hostPort)
-                        .forceReturnValues(true)
-                        .create(),
-                false);
+        logger.info("Using Infinispan service {}", this.service);
+        for (ServiceInstance service : discoveryClient.getInstances(this.service)) {
+            String hostPort = service.getHost() + ":" + service.getPort();
+            logger.info("Connecting to the Infinispan service at {}", hostPort);
+            builder = builder.addServers(hostPort);
+        }
+
+        return new RemoteCacheManager(builder.create(), false);
     }
 
     /**
@@ -60,20 +63,12 @@ public class InfinispanAutoConfiguration {
         return InfinispanIdempotentRepository.infinispanIdempotentRepository(cacheContainer, cacheName);
     }
 
-    public String getHost() {
-        return host;
+    public String getService() {
+        return service;
     }
 
-    public void setHost(String host) {
-        this.host = host;
-    }
-
-    public Integer getPort() {
-        return port;
-    }
-
-    public void setPort(Integer port) {
-        this.port = port;
+    public void setService(String service) {
+        this.service = service;
     }
 
     public String getCacheName() {

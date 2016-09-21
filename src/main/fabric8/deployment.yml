@@ -8,8 +8,8 @@ spec:
               cpu: "0.1"
               memory: 64Mi
             limits:
-              cpu: "0.2"
-              memory: 100Mi
+              cpu: "0.4"
+              memory: 200Mi
           env:
-          - name: DATAGRID_SERVICE_NAME
-            value: DATAGRID_APP_HOTROD
+          - name: INFINISPAN_SERVICE
+            value: datagrid-app-hotrod
