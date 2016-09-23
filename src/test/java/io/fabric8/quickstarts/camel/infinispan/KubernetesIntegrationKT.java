@@ -15,17 +15,23 @@
  */
 package io.fabric8.quickstarts.camel.infinispan;
 
-import org.apache.camel.spring.boot.FatJarRouter;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.ImportResource;
+import io.fabric8.kubernetes.client.KubernetesClient;
 
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.test.api.ArquillianResource;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
-@SpringBootApplication
-@ImportResource({"classpath:spring/camel-context.xml"})
-public class Application extends FatJarRouter {
+import static io.fabric8.kubernetes.assertions.Assertions.assertThat;
 
-    public static void main(String[] args) {
-        FatJarRouter.main(args);
+@RunWith(Arquillian.class)
+public class KubernetesIntegrationKT {
+
+    @ArquillianResource
+    KubernetesClient client;
+
+    @Test
+    public void testAppProvisionsRunningPods() throws Exception {
+        assertThat(client).deployments().pods().isPodReadyForPeriod();
     }
-
 }
