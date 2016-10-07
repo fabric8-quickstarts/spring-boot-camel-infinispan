@@ -49,14 +49,11 @@ public class InfinispanAutoConfiguration {
      */
     private String cacheName = "default";
 
-    @Autowired
-    private Environment environment;
-
     /**
      * Defines a bean named 'remoteCacheContainer' that points to the remote Infinispan cluster.
      */
     @Bean(initMethod = "start", destroyMethod = "stop")
-    public BasicCacheContainer remoteCacheContainer() {
+    public BasicCacheContainer remoteCacheContainer(Environment environment) {
 
         String serviceBaseName = service.toUpperCase().replace("-", "_");
         String host = environment.getProperty(serviceBaseName + "_SERVICE_HOST");
