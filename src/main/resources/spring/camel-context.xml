@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd        http://camel.apache.org/schema/spring       http://camel.apache.org/schema/spring/camel-spring.xsd">
+
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+
         <!-- Generation of sample messages -->
         <route id="test-message-producer-route" trace="false">
             <description>Route that will generate messages with duplicate IDs</description>
@@ -15,6 +17,7 @@
             <log id="log-generated-message" message="GENERATED message: ${body}"/>
             <to id="to-messages" uri="direct:messages"/>
         </route>
+
         <!-- Message consumer with idempotent repository -->
         <route id="test-message-consumer-route" trace="false">
             <description>Route that will consume generated messages and process them only once per message ID</description>
@@ -25,6 +28,7 @@
                 <log id="log-processed-message" message="PROCESSING new message: ${body}"/>
             </idempotentConsumer>
         </route>
+
         <!-- Periodic cache lookup -->
         <route id="test-using-cache-directly" trace="false">
             <description>Route that will query the infinispan cache periodically</description>
@@ -46,5 +50,6 @@
                 </otherwise>
             </choice>
         </route>
+
     </camelContext>
 </beans>
