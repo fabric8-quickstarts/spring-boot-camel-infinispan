@@ -7,46 +7,46 @@
         <!-- Generation of sample messages -->
         <route id="test-message-producer-route" trace="false">
             <description>Route that will generate messages with duplicate IDs</description>
-            <from id="timer" uri="timer:messages?period=5000"/>
-            <setHeader headerName="messageId" id="header-message-id">
+            <from id="route-timer" uri="timer:messages?period=5000"/>
+            <setHeader headerName="messageId" id="route-header-message-id">
                 <method method="newRandomKey" ref="keyGenerator"/>
             </setHeader>
-            <setBody id="sample-body">
+            <setBody id="route-sample-body">
                 <simple>Sample message with ID ${header.messageId}</simple>
             </setBody>
-            <log id="log-generated-message" message="GENERATED message: ${body}"/>
-            <to id="to-messages" uri="direct:messages"/>
+            <log id="route-log-generated-message" message="GENERATED message: ${body}"/>
+            <to id="route-to-messages" uri="direct:messages"/>
         </route>
 
         <!-- Message consumer with idempotent repository -->
         <route id="test-message-consumer-route" trace="false">
             <description>Route that will consume generated messages and process them only once per message ID</description>
-            <from id="from-messages" uri="direct:messages"/>
-            <idempotentConsumer id="idempotent-repository" messageIdRepositoryRef="infinispanRepository">
+            <from id="route-from-messages" uri="direct:messages"/>
+            <idempotentConsumer id="route-idempotent-repository" messageIdRepositoryRef="infinispanRepository">
                 <header>messageId</header>
                 <!-- The following steps will be done once per messageId -->
-                <log id="log-processed-message" message="PROCESSING new message: ${body}"/>
+                <log id="route-log-processed-message" message="PROCESSING new message: ${body}"/>
             </idempotentConsumer>
         </route>
 
         <!-- Periodic cache lookup -->
-        <route id="test-using-cache-directly" trace="false">
+        <route id="test-using-cache-directly-route" trace="false">
             <description>Route that will query the infinispan cache periodically</description>
-            <from id="lookup-timer" uri="timer:check?period=13000&amp;delay=13000"/>
-            <setHeader headerName="CamelInfinispanKey" id="header-infinispan-key">
+            <from id="route-lookup-timer" uri="timer:check?period=13000&amp;delay=13000"/>
+            <setHeader headerName="CamelInfinispanKey" id="route-header-infinispan-key">
                 <method method="newRandomKey" ref="keyGenerator"/>
             </setHeader>
-            <setHeader headerName="CamelInfinispanOperation" id="header-infinispan-operation">
+            <setHeader headerName="CamelInfinispanOperation" id="route-header-infinispan-operation">
                 <constant>CamelInfinispanOperationGet</constant>
             </setHeader>
-            <to id="infinispan-cache-lookup" uri="infinispan:remote?cacheContainer=#remoteCacheContainer"/>
-            <choice id="cache-choice">
-                <when id="cache-hit">
+            <to id="route-infinispan-cache-lookup" uri="infinispan:remote?cacheContainer=#remoteCacheContainer"/>
+            <choice id="route-cache-choice">
+                <when id="route-cache-hit">
                     <simple>${header.CamelInfinispanOperationResult} != null</simple>
-                    <log id="log-hit" message="CACHE LOOKUP: entry for key ${header.CamelInfinispanKey} is: ${header.CamelInfinispanOperationResult}"/>
+                    <log id="route-log-hit" message="CACHE LOOKUP: entry for key ${header.CamelInfinispanKey} is: ${header.CamelInfinispanOperationResult}"/>
                 </when>
-                <otherwise id="cache-miss">
-                    <log id="log-miss" message="CACHE LOOKUP: no entry for key ${header.CamelInfinispanKey}"/>
+                <otherwise id="route-cache-miss">
+                    <log id="route-log-miss" message="CACHE LOOKUP: no entry for key ${header.CamelInfinispanKey}"/>
                 </otherwise>
             </choice>
         </route>
