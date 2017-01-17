@@ -38,7 +38,7 @@ oc get pods
 Then the following command will package your app and run it on Kubernetes:
 
 ```
-mvn fabric8:run
+mvn fabric8:deploy
 ```
 
 To list all the running pods:
