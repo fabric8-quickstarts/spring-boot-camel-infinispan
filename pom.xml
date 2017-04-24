@@ -4,7 +4,7 @@
 
     <groupId>io.fabric8.quickstarts</groupId>
     <artifactId>spring-boot-camel-infinispan</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0.0.redhat-000027</version>
     <packaging>jar</packaging>
 
 
@@ -15,12 +15,12 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <!-- dependency versions -->
-        <fabric8.version>2.2.176</fabric8.version>
-        <infinispan-client.version>7.2.5.Final</infinispan-client.version>
+        <fabric8.version>2.2.170.redhat-000013</fabric8.version>
+        <infinispan-client.version>6.3.1.Final-redhat-1</infinispan-client.version>
         <spring-boot.version>1.4.1.RELEASE</spring-boot.version>
 
         <!-- maven plugin versions -->
-        <fabric8.maven.plugin.version>3.1.92</fabric8.maven.plugin.version>
+        <fabric8.maven.plugin.version>3.1.80.redhat-000013</fabric8.maven.plugin.version>
         <maven-compiler-plugin.version>3.3</maven-compiler-plugin.version>
         <maven-surefire-plugin.version>2.18.1</maven-surefire-plugin.version>
     </properties>
