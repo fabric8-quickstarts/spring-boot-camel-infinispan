@@ -13,3 +13,5 @@ spec:
           env:
           - name: INFINISPAN_SERVICE
             value: datagrid-app-hotrod
+          - name: SPRING_APPLICATION_JSON
+            value: '{"server":{"tomcat":{"max-threads":1}}}'
