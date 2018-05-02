@@ -39,11 +39,11 @@
             <setHeader headerName="CamelInfinispanOperation" id="route-header-infinispan-operation">
                 <constant>CamelInfinispanOperationGet</constant>
             </setHeader>
-            <to id="route-infinispan-cache-lookup" uri="infinispan:default?cacheContainer=#remoteCacheContainer"/>
+            <to id="route-infinispan-cache-lookup" uri="infinispan:default?cacheContainer=#remoteCacheContainer&amp;resultHeader=LookupResult"/>
             <choice id="route-cache-choice">
                 <when id="route-cache-hit">
-                    <simple>${header.CamelInfinispanOperationResult} != null</simple>
-                    <log id="route-log-hit" message="CACHE LOOKUP: entry for key ${header.CamelInfinispanKey} is: ${header.CamelInfinispanOperationResult}"/>
+                    <simple>${header.LookupResult} != null</simple>
+                    <log id="route-log-hit" message="CACHE LOOKUP: entry for key ${header.CamelInfinispanKey} is: ${header.LookupResult}"/>
                 </when>
                 <otherwise id="route-cache-miss">
                     <log id="route-log-miss" message="CACHE LOOKUP: no entry for key ${header.CamelInfinispanKey}"/>
