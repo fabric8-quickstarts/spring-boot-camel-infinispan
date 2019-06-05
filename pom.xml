@@ -4,7 +4,7 @@
 
     <groupId>io.fabric8.quickstarts</groupId>
     <artifactId>spring-boot-camel-infinispan</artifactId>
-    <version>1.0.0.fuse-731002</version>
+    <version>1.0.0.fuse-731002-redhat-00005</version>
     <packaging>jar</packaging>
 
 
