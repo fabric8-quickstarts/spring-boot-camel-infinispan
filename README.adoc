@@ -123,6 +123,8 @@ Wait until you can see that the pod for the `spring-boot-camel-infinispan` has s
 
 == Running the quickstart standalone on your machine
 
+To run the quickstart locally you'll need to have an Infinispan 7.2.5.Final server running on your machine.
+
 To run this quickstart as a standalone project on your local machine:
 
 . Download the project and extract the archive on your local filesystem.
