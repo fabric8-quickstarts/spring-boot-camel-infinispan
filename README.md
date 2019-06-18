@@ -11,6 +11,8 @@ Both routes use the `default` cache of the data grid, although this can be chang
 The default name for the target data grid cluster is `DATAGRID_APP_HOTROD`. It can be changed from the spring-boot configuration file or
 using the environment variable `DATAGRID_SERVICE_NAME`.
 
+To run this example both locally and on Kubernetes/Openshift you'll need to have a running Infinispan Server locally or on your cluster.
+
 ### Building
 
 The example can be built with
@@ -44,7 +46,7 @@ oc get pods
 Then the following command will package your app and run it on Kubernetes:
 
 ```
-mvn fabric8:run
+mvn fabric8:run -Pkubernetes
 ```
 
 To list all the running pods:
