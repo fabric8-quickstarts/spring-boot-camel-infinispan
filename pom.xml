@@ -15,7 +15,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <!-- dependency versions -->
-        <fuse.version>7.4.0.fuse-sb2-740006</fuse.version>
+        <fuse.version>7.4.0.fuse-sb2-740006-redhat-00001</fuse.version>
 
         <infinispan-client.version>7.2.5.Final</infinispan-client.version>
 
