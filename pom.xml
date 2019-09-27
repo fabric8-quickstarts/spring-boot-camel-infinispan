@@ -23,7 +23,7 @@
 
     <groupId>io.fabric8.quickstarts</groupId>
     <artifactId>spring-boot-camel-infinispan</artifactId>
-    <version>1.0.0.fuse-750017</version>
+    <version>1.0.0.fuse-750017-redhat-00001</version>
 
     <name>Fabric8 :: Quickstarts :: Spring Boot :: Camel and Infinispan</name>
     <description>Camel route using Infinispan and Spring Boot</description>
