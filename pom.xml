@@ -85,19 +85,6 @@
         </dependency>
 
         <dependency>
-            <groupId>io.fabric8</groupId>
-            <artifactId>kubernetes-model</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>io.fabric8</groupId>
-            <artifactId>kubernetes-client</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-
-        <dependency>
             <groupId>org.infinispan</groupId>
             <artifactId>infinispan-core</artifactId>
             <version>${infinispan-client.version}</version>
@@ -143,7 +130,13 @@
         </dependency>
         <dependency>
             <groupId>io.fabric8</groupId>
-            <artifactId>kubernetes-assertions</artifactId>
+            <artifactId>kubernetes-model</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>io.fabric8</groupId>
+            <artifactId>kubernetes-client</artifactId>
             <scope>test</scope>
         </dependency>
 
