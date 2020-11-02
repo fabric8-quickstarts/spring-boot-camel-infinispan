@@ -1,0 +1,2 @@
+
+To run the quickstart locally you'll need to have an Infinispan 7.2.5.Final server running on your machine.
