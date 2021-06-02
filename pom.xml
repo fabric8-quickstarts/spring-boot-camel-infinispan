@@ -36,8 +36,6 @@
         <fuse.bom.version>7.8.0.fuse-sb2-780033</fuse.bom.version>
         <docker.image.version>1.9</docker.image.version>
 
-        <infinispan-client.version>7.2.5.Final</infinispan-client.version>
-
         <!-- maven plugin versions -->
         <maven-compiler-plugin.version>3.6.0</maven-compiler-plugin.version>
         <maven-surefire-plugin.version>2.19.1</maven-surefire-plugin.version>
@@ -88,22 +86,18 @@
         <dependency>
             <groupId>org.infinispan</groupId>
             <artifactId>infinispan-core</artifactId>
-            <version>${infinispan-client.version}</version>
         </dependency>
         <dependency>
             <groupId>org.infinispan</groupId>
             <artifactId>infinispan-commons</artifactId>
-            <version>${infinispan-client.version}</version>
         </dependency>
         <dependency>
             <groupId>org.infinispan</groupId>
             <artifactId>infinispan-query-dsl</artifactId>
-            <version>${infinispan-client.version}</version>
         </dependency>
         <dependency>
             <groupId>org.infinispan</groupId>
             <artifactId>infinispan-client-hotrod</artifactId>
-            <version>${infinispan-client.version}</version>
         </dependency>
 
         <!-- For auto-configuration of quickstart properties -->
