@@ -33,7 +33,7 @@ import org.springframework.core.env.Environment;
  * Its properties can be changed using the application.properties file or environment variables.
  */
 @Configuration
-@ConfigurationProperties(prefix = "infinispan")
+@ConfigurationProperties( prefix = "infinispan")
 public class InfinispanAutoConfiguration {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
@@ -47,6 +47,31 @@ public class InfinispanAutoConfiguration {
      * The name of the Infinispan cache.
      */
     private String cacheName = "default";
+
+    /**
+     * The username of the infinispan server.
+     */
+    private String username = "infinispan";
+
+    /**
+     * The password of the infinispan server.
+     */
+    private String password = "foobar";
+
+    /**
+     * The authentication realm of the infinispan server.
+     */
+    private String realm = "default";
+
+    /**
+     * The authentication server name of the infinispan server.
+     */
+    private String serverName = "infinispan";
+
+    /**
+     *  the SASL Mechanism to access the infinispan instance.
+     */
+    private String saslMechanism="DIGEST-MD5";
 
     /**
      * Defines a bean named 'remoteCacheContainer' that points to the remote Infinispan cluster.
@@ -63,11 +88,24 @@ public class InfinispanAutoConfiguration {
         String hostPort = host + ":" + port;
         logger.info("Connecting to the Infinispan service at {}", hostPort);
 
-        ConfigurationBuilder builder = new ConfigurationBuilder()
-                .forceReturnValues(true)
-                .addServers(hostPort);
+        ConfigurationBuilder builder = new ConfigurationBuilder();
+                builder.forceReturnValues(true)
+                .addServer()
+                .host(host)
+                .port(Integer.parseInt(port))
+                .security()
+                    .authentication()
+                        .username(username)
+                        .password(password)
+                        .realm(realm)
+                        .serverName(serverName)
+                        .saslMechanism(saslMechanism);
 
-        return new RemoteCacheManager(builder.create(), false);
+
+       RemoteCacheManager remoteCacheManager = new RemoteCacheManager(builder.build());
+       remoteCacheManager.administration().getOrCreateCache(cacheName, "org.infinispan.DIST_SYNC");
+
+        return remoteCacheManager;
     }
 
     /**
@@ -92,5 +130,45 @@ public class InfinispanAutoConfiguration {
 
     public void setCacheName(String cacheName) {
         this.cacheName = cacheName;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getRealm() {
+        return realm;
+    }
+
+    public void setRealm(String realm) {
+        this.realm = realm;
+    }
+
+    public String getServerName() {
+        return serverName;
+    }
+
+    public void setServerName(String serverName) {
+        this.serverName = serverName;
+    }
+
+    public String getSaslMechanism() {
+        return saslMechanism;
+    }
+
+    public void setSaslMechanism(String saslMechanism) {
+        this.saslMechanism = saslMechanism;
     }
 }

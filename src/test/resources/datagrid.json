@@ -50,8 +50,8 @@
       "spec": {
         "ports": [
           {
-            "port": 11333,
-            "targetPort": 11333
+            "port": 11222,
+            "targetPort": 11222
           }
         ],
         "selector": {
@@ -119,22 +119,24 @@
                 "image": "jboss-datagrid82-openshift",
                 "imagePullPolicy": "Always",
                 "livenessProbe": {
-                  "exec": {
-                    "command": [
-                      "/bin/bash",
-                      "-c",
-                      "/opt/datagrid/bin/livenessProbe.sh"
-                    ]
-                  }
+                  "httpGet": {
+                    "path": "/rest/v2/cache-managers/default/health/status",
+                    "port": 11222
+                  },
+                  "failureThreshold": 5,
+                  "initialDelaySeconds": 10,
+                  "successThreshold": 1,
+                  "timeoutSeconds": 10
                 },
                 "readinessProbe": {
-                  "exec": {
-                    "command": [
-                      "/bin/bash",
-                      "-c",
-                      "/opt/datagrid/bin/readinessProbe.sh"
-                    ]
-                  }
+                  "httpGet": {
+                    "path": "/rest/v2/cache-managers/default/health/status",
+                    "port": 11222
+                  },
+                  "failureThreshold": 5,
+                  "initialDelaySeconds": 10,
+                  "successThreshold": 1,
+                  "timeoutSeconds": 10
                 },
                 "ports": [
                   {
@@ -158,17 +160,28 @@
                     "protocol": "TCP"
                   },
                   {
-                    "name": "hotrod-internal",
-                    "containerPort": 11222,
-                    "protocol": "TCP"
-                  },
-                  {
                     "name": "hotrod",
-                    "containerPort": 11333,
+                    "containerPort": 11222,
                     "protocol": "TCP"
                   }
                 ],
                 "env": [
+                  {
+                    "name": "USER",
+                    "value": "infinispan"
+                  },
+                  {
+                    "name": "PASS",
+                    "value": "foobar"
+                  },
+                  {
+                    "name": "JAVA_OPTS",
+                    "value": "-Xms512m -Xmx512m -XX:MaxPermSize=256m"
+                  },
+                  {
+                    "name": "JAVA_OPTS_HOTROD",
+                    "value": "-Xms512m -Xmx512m -XX:MaxPermSize=256m"
+                  },
                   {
                     "name": "HOTROD_SERVICE_NAME",
                     "value": "datagrid-app-hotrod"
