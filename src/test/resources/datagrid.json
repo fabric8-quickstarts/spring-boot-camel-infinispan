@@ -4,20 +4,20 @@
   "metadata": {
     "annotations": {
       "iconClass": "icon-jboss",
-      "description": "JDG 6.5",
+      "description": "JDG 8.2",
       "tags": "datagrid,jboss,xpaas",
-      "openshift.io/display-name": "Red Hat JBoss Data Grid 6.5 (Ephemeral, no https)"
+      "openshift.io/display-name": "Red Hat JBoss Data Grid 8.2 (Ephemeral, no https)"
     },
-    "name": "datagrid65-basic"
+    "name": "datagrid82-basic"
   },
   "items": [
     {
       "kind": "ImageStream",
-      "apiVersion": "v1",
+      "apiVersion": "image.openshift.io/v1",
       "metadata": {
-        "name": "jboss-datagrid65-openshift",
+        "name": "jboss-datagrid82-openshift",
         "annotations": {
-          "openshift.io/display-name": "Red Hat JBoss Data Grid 6.5",
+          "openshift.io/display-name": "Red Hat JBoss Data Grid 8.2",
           "version": "1.4.6"
         }
       },
@@ -29,16 +29,16 @@
           {
             "name": "1.4",
             "annotations": {
-              "description": "JBoss Data Grid 6.5 S2I images.",
+              "description": "JBoss Data Grid 8.2 S2I images.",
               "iconClass": "icon-jboss",
               "tags": "datagrid,jboss,xpaas",
-              "supports":"datagrid:6.5,xpaas:1.4",
+              "supports":"datagrid:8.2,xpaas:1.4",
               "version": "1.4",
-              "openshift.io/display-name": "Red Hat JBoss Data Grid 6.5"
+              "openshift.io/display-name": "Red Hat JBoss Data Grid 8.2"
             },
             "from": {
               "kind": "DockerImage",
-              "name": "registry.access.redhat.com/jboss-datagrid-6/datagrid65-openshift:1.4"
+              "name": "registry.redhat.io/datagrid/datagrid-8-rhel8:1.2-8.2.0.GA.4"
             }
           }
         ]
@@ -50,8 +50,8 @@
       "spec": {
         "ports": [
           {
-            "port": 11333,
-            "targetPort": 11333
+            "port": 11222,
+            "targetPort": 11222
           }
         ],
         "selector": {
@@ -70,7 +70,7 @@
     },
     {
       "kind": "DeploymentConfig",
-      "apiVersion": "v1",
+      "apiVersion": "apps.openshift.io/v1",
       "metadata": {
         "name": "datagrid",
         "labels": {
@@ -91,7 +91,7 @@
               ],
               "from": {
                 "kind": "ImageStreamTag",
-                "name": "jboss-datagrid65-openshift:1.4"
+                "name": "jboss-datagrid82-openshift:1.4"
               }
             }
           },
@@ -116,25 +116,27 @@
             "containers": [
               {
                 "name": "datagrid",
-                "image": "jboss-datagrid65-openshift",
+                "image": "jboss-datagrid82-openshift",
                 "imagePullPolicy": "Always",
                 "livenessProbe": {
-                  "exec": {
-                    "command": [
-                      "/bin/bash",
-                      "-c",
-                      "/opt/datagrid/bin/livenessProbe.sh"
-                    ]
-                  }
+                  "httpGet": {
+                    "path": "/rest/v2/cache-managers/default/health/status",
+                    "port": 11222
+                  },
+                  "failureThreshold": 5,
+                  "initialDelaySeconds": 10,
+                  "successThreshold": 1,
+                  "timeoutSeconds": 10
                 },
                 "readinessProbe": {
-                  "exec": {
-                    "command": [
-                      "/bin/bash",
-                      "-c",
-                      "/opt/datagrid/bin/readinessProbe.sh"
-                    ]
-                  }
+                  "httpGet": {
+                    "path": "/rest/v2/cache-managers/default/health/status",
+                    "port": 11222
+                  },
+                  "failureThreshold": 5,
+                  "initialDelaySeconds": 10,
+                  "successThreshold": 1,
+                  "timeoutSeconds": 10
                 },
                 "ports": [
                   {
@@ -158,17 +160,28 @@
                     "protocol": "TCP"
                   },
                   {
-                    "name": "hotrod-internal",
-                    "containerPort": 11222,
-                    "protocol": "TCP"
-                  },
-                  {
                     "name": "hotrod",
-                    "containerPort": 11333,
+                    "containerPort": 11222,
                     "protocol": "TCP"
                   }
                 ],
                 "env": [
+                  {
+                    "name": "USER",
+                    "value": "infinispan"
+                  },
+                  {
+                    "name": "PASS",
+                    "value": "foobar"
+                  },
+                  {
+                    "name": "JAVA_OPTS",
+                    "value": "-Xms512m -Xmx512m -XX:MaxPermSize=256m"
+                  },
+                  {
+                    "name": "JAVA_OPTS_HOTROD",
+                    "value": "-Xms512m -Xmx512m -XX:MaxPermSize=256m"
+                  },
                   {
                     "name": "HOTROD_SERVICE_NAME",
                     "value": "datagrid-app-hotrod"
